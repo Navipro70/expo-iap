@@ -396,7 +396,7 @@ public class ExpoIapModule: Module {
                             // Debug: Check if jwsRepresentationIos is included in serialized result
                             logDebug("buyProduct serialized includes JWS: \(serialized["jwsRepresentationIos"] != nil)")
                             
-                            self.sendEvent(IapEvent.PurchaseUpdated, serialized)
+                            // self.sendEvent(IapEvent.PurchaseUpdated, serialized)
                             return serialized
                         }
                     case .userCancelled:
