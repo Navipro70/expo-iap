@@ -224,6 +224,9 @@ public class ExpoIapModule: Module {
                 return products.map { serializeProduct($0) }.compactMap { $0 }
             } catch {
                 print("Error fetching items: \(error)")
+                if error is Exception {
+                    throw error
+                }
                 throw error
             }
         }
@@ -404,6 +407,9 @@ public class ExpoIapModule: Module {
                         throw Exception(name: "ExpoIapModule", description: "Unknown purchase result", code: "5")
                     }
                 } catch {
+                    if error is Exception {
+                        throw error
+                    }
                     throw Exception(name: "ExpoIapModule", description: "Purchase failed: \(error.localizedDescription)", code: "6")
                 }
             } else {
@@ -429,6 +435,9 @@ public class ExpoIapModule: Module {
                 }
                 return status.map { serializeSubscriptionStatus($0) }
             } catch {
+                if error is Exception {
+                    throw error
+                }
                 throw Exception(name: "ExpoIapModule", description: "Error getting subscription status: \(error.localizedDescription)", code: "2")
             }
         }
@@ -446,6 +455,9 @@ public class ExpoIapModule: Module {
                     } catch StoreError.failedVerification {
                         throw Exception(name: "ExpoIapModule", description: "Failed to verify transaction for sku \(sku)", code: "2")
                     } catch {
+                        if error is Exception {
+                            throw error
+                        }
                         throw Exception(name: "ExpoIapModule", description: "Error fetching entitlement for sku \(sku): \(error.localizedDescription)", code: "3")
                     }
                 } else {
@@ -469,6 +481,9 @@ public class ExpoIapModule: Module {
                     } catch StoreError.failedVerification {
                         throw Exception(name: "ExpoIapModule", description: "Failed to verify transaction for sku \(sku)", code: "2")
                     } catch {
+                        if error is Exception {
+                            throw error
+                        }
                         throw Exception(name: "ExpoIapModule", description: "Error fetching latest transaction for sku \(sku): \(error.localizedDescription)", code: "3")
                     }
                 } else {
@@ -498,6 +513,9 @@ public class ExpoIapModule: Module {
                 try await AppStore.sync()
                 return true
             } catch {
+                if error is Exception {
+                    throw error
+                }
                 throw Exception(name: "ExpoIapModule", description: "Error synchronizing with the AppStore: \(error.localizedDescription)", code: "9")
             }
         }
@@ -537,6 +555,9 @@ public class ExpoIapModule: Module {
                         await transaction.finish()
                         self.transactions.removeValue(forKey: String(transaction.id))
                     } catch {
+                        if error is Exception {
+                            throw error
+                        }
                         print("Failed to finish transaction")
                     }
                 }
@@ -561,6 +582,9 @@ public class ExpoIapModule: Module {
                 } catch StoreError.failedVerification {
                     throw Exception(name: "ExpoIapModule", description: "Failed to verify transaction for sku \(sku)", code: "2")
                 } catch {
+                    if error is Exception {
+                        throw error
+                    }
                     throw Exception(name: "ExpoIapModule", description: "Failed to refund purchase: \(error.localizedDescription)", code: "3")
                 }
             #else
