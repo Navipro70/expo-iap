@@ -1,6 +1,6 @@
 // Import the native module. On web, it will be resolved to ExpoIap.web.ts
 // and on native platforms to ExpoIap.ts
-import {NativeModulesProxy, EventEmitter} from 'expo-modules-core';
+import {NativeModulesProxy} from 'expo-modules-core';
 import {Platform} from 'react-native';
 import {
   Product,
@@ -35,6 +35,7 @@ export const PI = ExpoIapModule.PI;
 export enum IapEvent {
   PurchaseUpdated = 'purchase-updated',
   PurchaseError = 'purchase-error',
+  /** @deprecated Use PurchaseUpdated instead. This will be removed in a future version. */
   TransactionIapUpdated = 'iap-transaction-updated',
 }
 
@@ -42,9 +43,17 @@ export function setValueAsync(value: string) {
   return ExpoIapModule.setValueAsync(value);
 }
 
-export const emitter = new EventEmitter(
-  ExpoIapModule || NativeModulesProxy.ExpoIap,
-);
+// Ensure the emitter has proper EventEmitter interface
+export const emitter = (ExpoIapModule || NativeModulesProxy.ExpoIap) as {
+  addListener: (
+    eventName: string,
+    listener: (...args: any[]) => void,
+  ) => {remove: () => void};
+  removeListener: (
+    eventName: string,
+    listener: (...args: any[]) => void,
+  ) => void;
+};
 
 export const purchaseUpdatedListener = (
   listener: (event: Purchase) => void,
@@ -59,7 +68,7 @@ export const purchaseUpdatedListener = (
 export const purchaseErrorListener = (
   listener: (error: PurchaseError) => void,
 ) => {
-  return emitter.addListener<PurchaseError>(IapEvent.PurchaseError, listener);
+  return emitter.addListener(IapEvent.PurchaseError, listener);
 };
 
 export function initConnection() {
